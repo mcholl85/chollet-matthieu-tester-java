@@ -34,17 +34,17 @@ public class ParkingServiceTest {
     @BeforeEach
     private void setUpPerTest() {
         try {
-            when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+            lenient().when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
             ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
             Ticket ticket = new Ticket();
             ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
-            when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
-            when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-            when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
-            when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+            lenient().when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
+            lenient().when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
+            lenient().when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
+            lenient().when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
@@ -62,7 +62,6 @@ public class ParkingServiceTest {
 
     @Test
     public void testProcessIncomingVehicle(){
-        Mockito.reset(ticketDAO);
         when(ticketDAO.getNbTicket(anyString())).thenReturn(2);
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(any())).thenReturn(1);
@@ -73,7 +72,6 @@ public class ParkingServiceTest {
 
     @Test
     public void processExitingVehicleTestUnableUpdate(){
-        Mockito.reset(ticketDAO, parkingSpotDAO);
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
         Ticket ticket = new Ticket();
         ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
@@ -88,7 +86,6 @@ public class ParkingServiceTest {
 
     @Test
     public void testGetNextParkingNumberIfAvailable(){
-        Mockito.reset(ticketDAO, parkingSpotDAO, inputReaderUtil);
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(any())).thenReturn(1);
         ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
@@ -98,9 +95,9 @@ public class ParkingServiceTest {
 
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberNotFound(){
-        Mockito.reset(ticketDAO, parkingSpotDAO, inputReaderUtil);
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(any())).thenReturn(-1);
+
         try {
             parkingService.getNextParkingNumberIfAvailable();
         } catch (Exception e) {
@@ -110,7 +107,6 @@ public class ParkingServiceTest {
 
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberWrongArgument(){
-        Mockito.reset(ticketDAO, parkingSpotDAO, inputReaderUtil);
         when(inputReaderUtil.readSelection()).thenReturn(3);
         try {
             parkingService.getNextParkingNumberIfAvailable();
