@@ -88,6 +88,23 @@ public class TicketDAO {
         return false;
     }
 
+    public boolean updateInTime(Ticket ticket) {
+        Connection con = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_INTIMETICKET);
+            ps.setTimestamp(1, new Timestamp(ticket.getInTime().getTime()));
+            ps.setInt(2,ticket.getId());
+            ps.execute();
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving ticket info",ex);
+        }finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return false;
+    }
+
     public int getNbTicket(String vehiculeRegNumber) {
         Connection con = null;
         int nbTicket = 0;
@@ -96,6 +113,7 @@ public class TicketDAO {
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_NB_TICKET);
             ps.setString(1, vehiculeRegNumber);
             ResultSet rs = ps.executeQuery();
+
             if(rs.next()){
                 nbTicket = rs.getInt(1);
             }

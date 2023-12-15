@@ -35,7 +35,7 @@ public class ParkingService {
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
 
-                if(isRegularUser(vehicleRegNumber)) {
+                if(ticketDAO.getNbTicket(vehicleRegNumber) > 0) {
                     System.out.println("Heureux de vous revoir ! En tant qu’utilisateur régulier de notre parking,vous allez obtenir une remise de 5%");
                 }
 
@@ -123,6 +123,6 @@ public class ParkingService {
     }
 
     private boolean isRegularUser(String vehiculeRegNumber) {
-        return ticketDAO.getNbTicket(vehiculeRegNumber) > 0;
+        return ticketDAO.getNbTicket(vehiculeRegNumber) > 1;
     }
 }

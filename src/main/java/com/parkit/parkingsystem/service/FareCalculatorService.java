@@ -34,10 +34,12 @@ public class FareCalculatorService {
     }
 
     private double calculatePrice(double duration, double rate, boolean discount) {
-        if(duration < Duration.FREE) {
+        if(duration < Duration.FREE)
             return 0;
-        }
 
-        return discount ? rate * duration * Fare.DISCOUNT_RATE : rate * duration;
+        if(discount)
+            return (double) Math.round(rate * duration * Fare.DISCOUNT_RATE * 100) / 100;
+
+        return (double) Math.round(rate * duration * 100) / 100;
     }
 }
